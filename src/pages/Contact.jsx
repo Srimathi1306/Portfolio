@@ -1,11 +1,19 @@
 function Contact() {
   return (
     <div>
-      <h1>Contact Me</h1>
-      <p>
-        Feel free to reach out to me at srimathi@example.com or through my
-        social media profiles.
-      </p>
+      <h1 className="section-title">Contact</h1>
+
+      <div className="card">
+        <p>
+          <strong>Email:</strong> your-email@gmail.com
+        </p>
+        <p>
+          <strong>GitHub:</strong> your-github-link
+        </p>
+        <p>
+          <strong>LinkedIn:</strong> your-linkedin-link
+        </p>
+      </div>
     </div>
   );
 }

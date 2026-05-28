@@ -1,10 +1,15 @@
 function About() {
   return (
     <div>
-      <h1>About Me</h1>
-      <p>
-        I'm a passionate developer with experience in Java and web technologies.
-      </p>
+      <h1 className="section-title">About Me</h1>
+
+      <div className="card">
+        <p>
+          I am a Computer Science and Business Systems student interested in
+          Java full stack development. I am currently learning Spring Boot, REST
+          API development, MySQL, React, and project deployment.
+        </p>
+      </div>
     </div>
   );
 }
