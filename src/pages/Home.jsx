@@ -1,6 +1,7 @@
 import ProjectCard from "../components/ProjectCard";
 import ActivityCard from "../components/ActivityCard";
 import ReviewCard from "../components/ReviewCard";
+import projects from "../data/projects";
 
 function Home() {
   return (
@@ -16,17 +17,14 @@ function Home() {
       <section className="section">
         <h2 className="section-title">Featured Projects</h2>
 
-        <ProjectCard
-          title="Employee Management System"
-          description="Spring Boot CRUD application for managing employees using REST APIs and MySQL."
-          techStack="Java, Spring Boot, MySQL, REST API"
-        />
-
-        <ProjectCard
-          title="Vulnerability Intelligence API"
-          description="Backend API for parsing vulnerability data with search, filtering, sorting, and pagination."
-          techStack="Java, Spring Boot, JSON Parsing, MySQL"
-        />
+        {projects.slice(0, 2).map((project) => (
+          <ProjectCard
+            key={project.id}
+            title={project.title}
+            description={project.description}
+            techStack={project.techStack}
+          />
+        ))}
       </section>
 
       <section className="section">
