@@ -2,17 +2,40 @@ import ProjectCard from "../components/ProjectCard";
 import ActivityCard from "../components/ActivityCard";
 import ReviewCard from "../components/ReviewCard";
 import projects from "../data/projects";
+import Skills from "../components/Skills";
+import Education from "../components/Education";
+import Timeline from "../components/Timeline";
+import { Link } from "react-router-dom";
 
 function Home() {
   return (
     <div>
       <section className="section">
         <h1>Hi, I am Srimathi</h1>
+        <br />
+        <p>Computer Science and Business Systems Student</p>
+        <br />
         <p>
-          Aspiring Java Full Stack Developer focused on Spring Boot, REST APIs,
-          MySQL, and real-world project development.
+          Focused on Java, Spring Boot, REST APIs, MySQL and Full Stack
+          Development.
         </p>
+        <br />
+        <p>
+          Currently building real-world backend applications and preparing for
+          software engineering roles.
+        </p>
+        <br />
+        <Link to="/projects">
+          <button>View Projects</button>
+        </Link>
+
+        <Link to="/contact">
+          <button>Contact Me</button>
+        </Link>
       </section>
+      <Skills />
+      <Education />
+      <Timeline />
 
       <section className="section">
         <h2 className="section-title">Featured Projects</h2>
