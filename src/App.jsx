@@ -6,6 +6,7 @@ import Projects from "./pages/Projects";
 import Activity from "./pages/Activity";
 import Reviews from "./pages/Reviews";
 import Contact from "./pages/Contact";
+import Admin from "./pages/Admin";
 
 import Layout from "./components/Layout";
 
@@ -22,6 +23,7 @@ function App() {
             <Route path="/activity" element={<Activity />} />
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/admin" element={<Admin />} />
           </Routes>
         </Layout>
       </div>

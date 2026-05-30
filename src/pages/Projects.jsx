@@ -1,9 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProjectCard from "../components/ProjectCard";
-import projects from "../data/projects";
+import { getProjects } from "../services/projectService";
 
 function Projects() {
   const [filter, setFilter] = useState("All");
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    getProjects()
+      .then((response) => {
+        setProjects(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
   const filteredProjects =
     filter === "All"
       ? projects
@@ -31,6 +43,12 @@ function Projects() {
           onClick={() => setFilter("AI")}
         >
           AI
+        </button>
+        <button
+          className={filter === "Full Stack" ? "active" : ""}
+          onClick={() => setFilter("Full Stack")}
+        >
+          Full Stack
         </button>
       </div>
       <br />

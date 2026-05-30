@@ -1,13 +1,24 @@
 import ProjectCard from "../components/ProjectCard";
 import ActivityCard from "../components/ActivityCard";
 import ReviewCard from "../components/ReviewCard";
-import projects from "../data/projects";
 import Skills from "../components/Skills";
 import Education from "../components/Education";
 import Timeline from "../components/Timeline";
+import { getProjects } from "../services/projectService";
 import { Link } from "react-router-dom";
-
+import { useEffect, useState } from "react";
 function Home() {
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    getProjects()
+      .then((response) => {
+        setProjects(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
   return (
     <div>
       <section className="section">
