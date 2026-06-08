@@ -5,10 +5,12 @@ import Skills from "../components/Skills";
 import Education from "../components/Education";
 import Timeline from "../components/Timeline";
 import { getProjects } from "../services/projectService";
+import { getActivities } from "../services/activityService";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 function Home() {
   const [projects, setProjects] = useState([]);
+  const [activities, setActivities] = useState([]);
 
   useEffect(() => {
     getProjects()
@@ -18,7 +20,15 @@ function Home() {
       .catch((error) => {
         console.error(error);
       });
+    getActivities()
+      .then((response) => {
+        setActivities(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
+
   return (
     <div>
       <section className="section">
@@ -64,11 +74,14 @@ function Home() {
       <section className="section">
         <h2 className="section-title">Recent Activity</h2>
 
-        <ActivityCard
-          title="Started building my dynamic portfolio"
-          date="Day 2"
-          content="Created layout, reusable components, and project cards."
-        />
+        {activities.slice(0, 2).map((activity) => (
+          <ActivityCard
+            key={activity.id}
+            title={activity.title}
+            date={activity.date}
+            content={activity.content}
+          />
+        ))}
       </section>
 
       <section className="section">

@@ -1,7 +1,19 @@
+import { useEffect, useState } from "react";
 import ActivityCard from "../components/ActivityCard";
-import activities from "../data/activities";
+import { getActivities } from "../services/activityService";
 
 function Activity() {
+  const [activities, setActivities] = useState([]);
+
+  useEffect(() => {
+    getActivities()
+      .then((response) => {
+        setActivities(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
   return (
     <div>
       <h1 className="section-title">Activity</h1>

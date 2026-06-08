@@ -5,7 +5,15 @@ import {
   deleteProject,
   updateProject,
 } from "../services/projectService";
+import {
+  getActivities,
+  addActivity,
+  updateActivity,
+  deleteActivity,
+} from "../services/activityService";
 import ProjectCard from "../components/ProjectCard";
+import ActivityCard from "../components/ActivityCard";
+
 function Admin() {
   const [project, setProject] = useState({
     title: "",
@@ -16,6 +24,16 @@ function Admin() {
   const [projects, setProjects] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const formRef = useRef(null);
+
+  const [activity, setActivity] = useState({
+    title: "",
+    content: "",
+    date: "",
+  });
+
+  const [activities, setActivities] = useState([]);
+  const [editingActivityId, setEditingActivityId] = useState(null);
+
   const loadProjects = () => {
     getProjects()
       .then((response) => {
@@ -26,8 +44,20 @@ function Admin() {
         console.error(error);
       });
   };
+
+  const loadActivities = () => {
+    getActivities()
+      .then((response) => {
+        setActivities(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   useEffect(() => {
     loadProjects();
+    loadActivities();
   }, []);
 
   const handleChange = (e) => {
@@ -96,54 +126,120 @@ function Admin() {
     });
     formRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const handleActivityChange = (e) => {
+    setActivity({
+      ...activity,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleActivitySubmit = (e) => {
+    e.preventDefault();
+
+    if (editingActivityId !== null) {
+      updateActivity(editingActivityId, activity)
+        .then(() => {
+          loadActivities();
+
+          setEditingActivityId(null);
+
+          setActivity({
+            title: "",
+            content: "",
+            date: "",
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      addActivity(activity)
+        .then(() => {
+          loadActivities();
+
+          setActivity({
+            title: "",
+            content: "",
+            date: "",
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
+
+  const handleActivityEdit = (selectedActivity) => {
+    setEditingActivityId(selectedActivity.id);
+
+    setActivity({
+      title: selectedActivity.title,
+      content: selectedActivity.content,
+      date: selectedActivity.date,
+    });
+  };
+
+  const handleActivityDelete = (id) => {
+    deleteActivity(id)
+      .then(() => {
+        loadActivities();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
-    <div>
+    <div className="section">
       <h1 className="section-title">Admin Dashboard</h1>
 
-      <div className="card" ref={formRef}>
-        <h2>Add Project</h2>
+      <div className="section">
+        <h2 className="section-title">Projects</h2>
+        <div className="card" ref={formRef}>
+          <h2>Add Project</h2>
 
-        <form onSubmit={handleSubmit} className="form">
-          <input
-            type="text"
-            name="title"
-            placeholder="Project Title"
-            value={project.title}
-            onChange={handleChange}
-            required
-          />
+          <form onSubmit={handleSubmit} className="form">
+            <input
+              type="text"
+              name="title"
+              placeholder="Project Title"
+              value={project.title}
+              onChange={handleChange}
+              required
+            />
 
-          <textarea
-            name="description"
-            placeholder="Project Description"
-            value={project.description}
-            onChange={handleChange}
-            required
-          />
+            <textarea
+              name="description"
+              placeholder="Project Description"
+              value={project.description}
+              onChange={handleChange}
+              required
+            />
 
-          <input
-            type="text"
-            name="techStack"
-            placeholder="Tech Stack"
-            value={project.techStack}
-            onChange={handleChange}
-          />
+            <input
+              type="text"
+              name="techStack"
+              placeholder="Tech Stack"
+              value={project.techStack}
+              onChange={handleChange}
+            />
 
-          <input
-            type="text"
-            name="category"
-            placeholder="Category"
-            value={project.category}
-            onChange={handleChange}
-          />
+            <input
+              type="text"
+              name="category"
+              placeholder="Category"
+              value={project.category}
+              onChange={handleChange}
+            />
 
-          <button type="submit">
-            {editingId ? "Update Project" : "Add Project"}
-          </button>
-        </form>
-      </div>
-      <div className="card">
-        <h2 className="section-title">Manage Projects</h2>
+            <button type="submit">
+              {editingId ? "Update Project" : "Add Project"}
+            </button>
+          </form>
+        </div>
+
+        <h2 className="section-title">Project List</h2>
         {projects.map((project) => (
           <ProjectCard
             key={project.id}
@@ -152,6 +248,57 @@ function Admin() {
             techStack={project.techStack}
             onEdit={() => handleEdit(project)}
             onDelete={() => handleDelete(project.id)}
+          />
+        ))}
+      </div>
+
+      <div className="section">
+        <h2 className="section-title">Activities</h2>
+        <div className="card">
+          <h2 className="section-title">Add Activity</h2>
+
+          <form onSubmit={handleActivitySubmit} className="form">
+            <input
+              type="text"
+              name="title"
+              placeholder="Activity Title"
+              value={activity.title}
+              onChange={handleActivityChange}
+              required
+            />
+
+            <textarea
+              name="content"
+              placeholder="Activity Content"
+              value={activity.content}
+              onChange={handleActivityChange}
+              required
+            />
+
+            <input
+              type="text"
+              name="date"
+              placeholder="Date / Day"
+              value={activity.date}
+              onChange={handleActivityChange}
+            />
+
+            <button type="submit">
+              {editingActivityId !== null ? "Update Activity" : "Add Activity"}
+            </button>
+          </form>
+        </div>
+
+        <h2 className="section-title">Activity List</h2>
+
+        {activities.map((activity) => (
+          <ActivityCard
+            key={activity.id}
+            title={activity.title}
+            date={activity.date}
+            content={activity.content}
+            onEdit={() => handleActivityEdit(activity)}
+            onDelete={() => handleActivityDelete(activity.id)}
           />
         ))}
       </div>
