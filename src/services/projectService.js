@@ -9,3 +9,6 @@ export const getProjects = () => {
 export const addProject = (project) => {
   return axios.post(API_URL, project);
 };
+export const deleteProject = (id) => {
+  return axios.delete(`${API_URL}/${id}`);
+};

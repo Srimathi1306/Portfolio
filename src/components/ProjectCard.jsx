@@ -1,4 +1,4 @@
-function ProjectCard({ title, description, techStack }) {
+function ProjectCard({ title, description, techStack, onDelete }) {
   return (
     <div className="card">
       <h3>{title}</h3>
@@ -6,6 +6,7 @@ function ProjectCard({ title, description, techStack }) {
       <p>
         <strong>Tech Stack:</strong> {techStack}
       </p>
+      {onDelete && <button onClick={onDelete}>Delete</button>}
     </div>
   );
 }

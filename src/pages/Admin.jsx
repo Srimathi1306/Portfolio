@@ -1,6 +1,10 @@
-import { useState } from "react";
-import { addProject } from "../services/projectService";
-
+import { useEffect, useState } from "react";
+import {
+  addProject,
+  getProjects,
+  deleteProject,
+} from "../services/projectService";
+import ProjectCard from "../components/ProjectCard";
 function Admin() {
   const [project, setProject] = useState({
     title: "",
@@ -8,6 +12,20 @@ function Admin() {
     techStack: "",
     category: "",
   });
+  const [projects, setProjects] = useState([]);
+  const loadProjects = () => {
+    getProjects()
+      .then((response) => {
+        setProjects(response.data);
+      })
+
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+  useEffect(() => {
+    loadProjects();
+  }, []);
 
   const handleChange = (e) => {
     setProject({
@@ -21,7 +39,7 @@ function Admin() {
 
     addProject(project)
       .then(() => {
-        alert("Project added successfully");
+        loadProjects();
 
         setProject({
           title: "",
@@ -33,6 +51,16 @@ function Admin() {
       .catch((error) => {
         console.error(error);
         alert("Failed to add project");
+      });
+  };
+
+  const handleDelete = (id) => {
+    deleteProject(id)
+      .then(() => {
+        loadProjects();
+      })
+      .catch((error) => {
+        console.error(error);
       });
   };
 
@@ -79,6 +107,18 @@ function Admin() {
 
           <button type="submit">Add Project</button>
         </form>
+      </div>
+      <div className="card">
+        <h2 className="section-title">Manage Projects</h2>
+        {projects.map((project) => (
+          <ProjectCard
+            key={project.id}
+            title={project.title}
+            description={project.description}
+            techStack={project.techStack}
+            onDelete={() => handleDelete(project.id)}
+          />
+        ))}
       </div>
     </div>
   );
