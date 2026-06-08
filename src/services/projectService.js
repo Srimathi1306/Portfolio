@@ -12,3 +12,6 @@ export const addProject = (project) => {
 export const deleteProject = (id) => {
   return axios.delete(`${API_URL}/${id}`);
 };
+export const updateProject = (id, project) => {
+  return axios.put(`${API_URL}/${id}`, project);
+};

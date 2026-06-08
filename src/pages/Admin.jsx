@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   addProject,
   getProjects,
   deleteProject,
+  updateProject,
 } from "../services/projectService";
 import ProjectCard from "../components/ProjectCard";
 function Admin() {
@@ -13,6 +14,8 @@ function Admin() {
     category: "",
   });
   const [projects, setProjects] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const formRef = useRef(null);
   const loadProjects = () => {
     getProjects()
       .then((response) => {
@@ -36,22 +39,40 @@ function Admin() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (editingId !== null) {
+      updateProject(editingId, project)
+        .then(() => {
+          loadProjects();
 
-    addProject(project)
-      .then(() => {
-        loadProjects();
+          setEditingId(null);
 
-        setProject({
-          title: "",
-          description: "",
-          techStack: "",
-          category: "",
+          setProject({
+            title: "",
+            description: "",
+            techStack: "",
+            category: "",
+          });
+        })
+        .catch((error) => {
+          console.error(error);
         });
-      })
-      .catch((error) => {
-        console.error(error);
-        alert("Failed to add project");
-      });
+    } else {
+      addProject(project)
+        .then(() => {
+          loadProjects();
+
+          setProject({
+            title: "",
+            description: "",
+            techStack: "",
+            category: "",
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("Failed to add project");
+        });
+    }
   };
 
   const handleDelete = (id) => {
@@ -64,11 +85,22 @@ function Admin() {
       });
   };
 
+  const handleEdit = (selectedProject) => {
+    setEditingId(selectedProject.id);
+
+    setProject({
+      title: selectedProject.title,
+      description: selectedProject.description,
+      techStack: selectedProject.techStack,
+      category: selectedProject.category,
+    });
+    formRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
   return (
     <div>
       <h1 className="section-title">Admin Dashboard</h1>
 
-      <div className="card">
+      <div className="card" ref={formRef}>
         <h2>Add Project</h2>
 
         <form onSubmit={handleSubmit} className="form">
@@ -105,7 +137,9 @@ function Admin() {
             onChange={handleChange}
           />
 
-          <button type="submit">Add Project</button>
+          <button type="submit">
+            {editingId ? "Update Project" : "Add Project"}
+          </button>
         </form>
       </div>
       <div className="card">
@@ -116,6 +150,7 @@ function Admin() {
             title={project.title}
             description={project.description}
             techStack={project.techStack}
+            onEdit={() => handleEdit(project)}
             onDelete={() => handleDelete(project.id)}
           />
         ))}
