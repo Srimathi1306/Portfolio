@@ -15,3 +15,6 @@ export const deleteProject = (id) => {
 export const updateProject = (id, project) => {
   return axios.put(`${API_URL}/${id}`, project);
 };
+export const getFeaturedProjects = () => {
+  return axios.get(`${API_URL}/featured`);
+};

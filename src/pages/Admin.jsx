@@ -11,8 +11,15 @@ import {
   updateActivity,
   deleteActivity,
 } from "../services/activityService";
+import {
+  getReviews,
+  addReview,
+  updateReview,
+  deleteReview,
+} from "../services/reviewService";
 import ProjectCard from "../components/ProjectCard";
 import ActivityCard from "../components/ActivityCard";
+import ReviewCard from "../components/ReviewCard";
 
 function Admin() {
   const [project, setProject] = useState({
@@ -20,19 +27,32 @@ function Admin() {
     description: "",
     techStack: "",
     category: "",
+    featured: false,
   });
   const [projects, setProjects] = useState([]);
   const [editingId, setEditingId] = useState(null);
-  const formRef = useRef(null);
+  const projectFormRef = useRef(null);
 
   const [activity, setActivity] = useState({
     title: "",
     content: "",
     date: "",
+    featured: false,
   });
 
   const [activities, setActivities] = useState([]);
   const [editingActivityId, setEditingActivityId] = useState(null);
+  const activityFormRef = useRef(null);
+
+  const [review, setReview] = useState({
+    reviewer: "",
+    role: "",
+    comment: "",
+  });
+
+  const [reviews, setReviews] = useState([]);
+  const [editingReviewId, setEditingReviewId] = useState(null);
+  const reviewFormRef = useRef(null);
 
   const loadProjects = () => {
     getProjects()
@@ -55,19 +75,32 @@ function Admin() {
       });
   };
 
+  const loadReviews = () => {
+    getReviews()
+      .then((response) => {
+        setReviews(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   useEffect(() => {
     loadProjects();
     loadActivities();
+    loadReviews();
   }, []);
 
-  const handleChange = (e) => {
+  const handleProjectChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
     setProject({
       ...project,
-      [e.target.name]: e.target.value,
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleProjectSubmit = (e) => {
     e.preventDefault();
     if (editingId !== null) {
       updateProject(editingId, project)
@@ -81,6 +114,7 @@ function Admin() {
             description: "",
             techStack: "",
             category: "",
+            featured: false,
           });
         })
         .catch((error) => {
@@ -96,6 +130,7 @@ function Admin() {
             description: "",
             techStack: "",
             category: "",
+            featured: false,
           });
         })
         .catch((error) => {
@@ -105,7 +140,7 @@ function Admin() {
     }
   };
 
-  const handleDelete = (id) => {
+  const handleProjectDelete = (id) => {
     deleteProject(id)
       .then(() => {
         loadProjects();
@@ -115,7 +150,7 @@ function Admin() {
       });
   };
 
-  const handleEdit = (selectedProject) => {
+  const handleProjectEdit = (selectedProject) => {
     setEditingId(selectedProject.id);
 
     setProject({
@@ -123,14 +158,17 @@ function Admin() {
       description: selectedProject.description,
       techStack: selectedProject.techStack,
       category: selectedProject.category,
+      featured: selectedProject.featured || false,
     });
-    formRef.current?.scrollIntoView({ behavior: "smooth" });
+    projectFormRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleActivityChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
     setActivity({
       ...activity,
-      [e.target.name]: e.target.value,
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -148,6 +186,7 @@ function Admin() {
             title: "",
             content: "",
             date: "",
+            featured: false,
           });
         })
         .catch((error) => {
@@ -162,6 +201,7 @@ function Admin() {
             title: "",
             content: "",
             date: "",
+            featured: false,
           });
         })
         .catch((error) => {
@@ -177,7 +217,9 @@ function Admin() {
       title: selectedActivity.title,
       content: selectedActivity.content,
       date: selectedActivity.date,
+      featured: selectedActivity.featured || false,
     });
+    activityFormRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleActivityDelete = (id) => {
@@ -190,22 +232,86 @@ function Admin() {
       });
   };
 
+  const handleReviewChange = (e) => {
+    setReview({
+      ...review,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+
+    if (editingReviewId !== null) {
+      updateReview(editingReviewId, review)
+        .then(() => {
+          loadReviews();
+
+          setEditingReviewId(null);
+
+          setReview({
+            reviewer: "",
+            role: "",
+            comment: "",
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      addReview(review)
+        .then(() => {
+          loadReviews();
+
+          setReview({
+            reviewer: "",
+            role: "",
+            comment: "",
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
+
+  const handleReviewEdit = (selectedReview) => {
+    setEditingReviewId(selectedReview.id);
+
+    setReview({
+      reviewer: selectedReview.reviewer,
+      role: selectedReview.role,
+      comment: selectedReview.comment,
+    });
+    reviewFormRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleReviewDelete = (id) => {
+    deleteReview(id)
+      .then(() => {
+        loadReviews();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
     <div className="section">
       <h1 className="section-title">Admin Dashboard</h1>
 
       <div className="section">
         <h2 className="section-title">Projects</h2>
-        <div className="card" ref={formRef}>
+        <div className="card" ref={projectFormRef}>
           <h2>Add Project</h2>
 
-          <form onSubmit={handleSubmit} className="form">
+          <form onSubmit={handleProjectSubmit} className="form">
             <input
               type="text"
               name="title"
               placeholder="Project Title"
               value={project.title}
-              onChange={handleChange}
+              onChange={handleProjectChange}
               required
             />
 
@@ -213,7 +319,7 @@ function Admin() {
               name="description"
               placeholder="Project Description"
               value={project.description}
-              onChange={handleChange}
+              onChange={handleProjectChange}
               required
             />
 
@@ -222,7 +328,7 @@ function Admin() {
               name="techStack"
               placeholder="Tech Stack"
               value={project.techStack}
-              onChange={handleChange}
+              onChange={handleProjectChange}
             />
 
             <input
@@ -230,8 +336,18 @@ function Admin() {
               name="category"
               placeholder="Category"
               value={project.category}
-              onChange={handleChange}
+              onChange={handleProjectChange}
             />
+
+            <label>
+              <input
+                type="checkbox"
+                name="featured"
+                checked={project.featured || false}
+                onChange={handleProjectChange}
+              />
+              Show on Home Page
+            </label>
 
             <button type="submit">
               {editingId ? "Update Project" : "Add Project"}
@@ -246,16 +362,16 @@ function Admin() {
             title={project.title}
             description={project.description}
             techStack={project.techStack}
-            onEdit={() => handleEdit(project)}
-            onDelete={() => handleDelete(project.id)}
+            onEdit={() => handleProjectEdit(project)}
+            onDelete={() => handleProjectDelete(project.id)}
           />
         ))}
       </div>
 
       <div className="section">
         <h2 className="section-title">Activities</h2>
-        <div className="card">
-          <h2 className="section-title">Add Activity</h2>
+        <div className="card" ref={activityFormRef}>
+          <h2>Add Activity</h2>
 
           <form onSubmit={handleActivitySubmit} className="form">
             <input
@@ -283,6 +399,16 @@ function Admin() {
               onChange={handleActivityChange}
             />
 
+            <label>
+              <input
+                type="checkbox"
+                name="featured"
+                checked={activity.featured || false}
+                onChange={handleActivityChange}
+              />
+              Show on Home Page
+            </label>
+
             <button type="submit">
               {editingActivityId !== null ? "Update Activity" : "Add Activity"}
             </button>
@@ -299,6 +425,57 @@ function Admin() {
             content={activity.content}
             onEdit={() => handleActivityEdit(activity)}
             onDelete={() => handleActivityDelete(activity.id)}
+          />
+        ))}
+      </div>
+
+      <div className="section">
+        <h2 className="section-title">Reviews</h2>
+        <div className="card" ref={reviewFormRef}>
+          <h2>Manage Reviews</h2>
+
+          <form onSubmit={handleReviewSubmit} className="form">
+            <input
+              type="text"
+              name="reviewer"
+              placeholder="Reviewer Name"
+              value={review.reviewer}
+              onChange={handleReviewChange}
+              required
+            />
+
+            <input
+              type="text"
+              name="role"
+              placeholder="Role e.g. Faculty, Recruiter, Friend"
+              value={review.role}
+              onChange={handleReviewChange}
+            />
+
+            <textarea
+              name="comment"
+              placeholder="Review / Advice"
+              value={review.comment}
+              onChange={handleReviewChange}
+              required
+            />
+
+            <button type="submit">
+              {editingReviewId !== null ? "Update Review" : "Add Review"}
+            </button>
+          </form>
+        </div>
+
+        <h2 className="section-title">Review List</h2>
+
+        {reviews.map((review) => (
+          <ReviewCard
+            key={review.id}
+            reviewer={review.reviewer}
+            role={review.role}
+            comment={review.comment}
+            onEdit={() => handleReviewEdit(review)}
+            onDelete={() => handleReviewDelete(review.id)}
           />
         ))}
       </div>

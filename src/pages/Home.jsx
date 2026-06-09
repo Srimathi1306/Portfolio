@@ -4,25 +4,36 @@ import ReviewCard from "../components/ReviewCard";
 import Skills from "../components/Skills";
 import Education from "../components/Education";
 import Timeline from "../components/Timeline";
-import { getProjects } from "../services/projectService";
-import { getActivities } from "../services/activityService";
+import { getFeaturedProjects } from "../services/projectService";
+import { getFeaturedActivities } from "../services/activityService";
+import { getReviews } from "../services/reviewService";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 function Home() {
   const [projects, setProjects] = useState([]);
   const [activities, setActivities] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    getProjects()
+    getFeaturedProjects()
       .then((response) => {
         setProjects(response.data);
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Error fetching featured projects:", error);
       });
-    getActivities()
+
+    getFeaturedActivities()
       .then((response) => {
         setActivities(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching featured activities:", error);
+      });
+
+    getReviews()
+      .then((response) => {
+        setReviews(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -61,36 +72,49 @@ function Home() {
       <section className="section">
         <h2 className="section-title">Featured Projects</h2>
 
-        {projects.slice(0, 2).map((project) => (
-          <ProjectCard
-            key={project.id}
-            title={project.title}
-            description={project.description}
-            techStack={project.techStack}
-          />
-        ))}
+        {projects.length === 0 ? (
+          <p>No featured projects selected yet.</p>
+        ) : (
+          projects.map((project) => (
+            <ProjectCard
+              key={project.id}
+              title={project.title}
+              description={project.description}
+              techStack={project.techStack}
+              category={project.category}
+            />
+          ))
+        )}
       </section>
 
       <section className="section">
         <h2 className="section-title">Recent Activity</h2>
 
-        {activities.slice(0, 2).map((activity) => (
-          <ActivityCard
-            key={activity.id}
-            title={activity.title}
-            date={activity.date}
-            content={activity.content}
-          />
-        ))}
+        {activities.length === 0 ? (
+          <p>No featured activities selected yet.</p>
+        ) : (
+          activities.map((activity) => (
+            <ActivityCard
+              key={activity.id}
+              title={activity.title}
+              content={activity.content}
+              date={activity.date}
+            />
+          ))
+        )}
       </section>
 
       <section className="section">
         <h2 className="section-title">Review Preview</h2>
 
-        <ReviewCard
-          name="Faculty Reviewer"
-          comment="Good project direction. Improve explanation of backend architecture."
-        />
+        {reviews.slice(0, 2).map((review) => (
+          <ReviewCard
+            key={review.id}
+            name={review.reviewer}
+            role={review.role}
+            comment={review.comment}
+          />
+        ))}
       </section>
     </div>
   );
