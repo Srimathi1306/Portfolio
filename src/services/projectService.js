@@ -18,3 +18,6 @@ export const updateProject = (id, project) => {
 export const getFeaturedProjects = () => {
   return axios.get(`${API_URL}/featured`);
 };
+export const getProjectById = (id) => {
+  return axios.get(`${API_URL}/${id}`);
+};

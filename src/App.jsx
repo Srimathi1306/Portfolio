@@ -7,6 +7,8 @@ import Activity from "./pages/Activity";
 import Reviews from "./pages/Reviews";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
+import ProjectDetails from "./pages/ProjectDetails";
+import ActivityDetails from "./pages/ActivityDetails";
 
 import Layout from "./components/Layout";
 
@@ -20,7 +22,9 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/projects" element={<Projects />} />
-            <Route path="/activity" element={<Activity />} />
+            <Route path="/projects/:id" element={<ProjectDetails />} />
+            <Route path="/activities" element={<Activity />} />
+            <Route path="/activities/:id" element={<ActivityDetails />} />
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/admin" element={<Admin />} />

@@ -411,6 +411,7 @@ function Admin() {
         {projects.map((project) => (
           <ProjectCard
             key={project.id}
+            id={project.id}
             title={project.title}
             description={project.description}
             techStack={project.techStack}
@@ -474,6 +475,7 @@ function Admin() {
         {activities.map((activity) => (
           <ActivityCard
             key={activity.id}
+            id={activity.id}
             title={activity.title}
             date={activity.date}
             content={activity.content}

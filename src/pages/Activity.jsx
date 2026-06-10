@@ -21,6 +21,7 @@ function Activity() {
       {activities.map((activity) => (
         <ActivityCard
           key={activity.id}
+          id={activity.id}
           title={activity.title}
           date={activity.date}
           content={activity.content}

@@ -17,6 +17,11 @@ export const updateActivity = (id, activity) => {
 export const deleteActivity = (id) => {
   return axios.delete(`${API_URL}/${id}`);
 };
+
 export const getFeaturedActivities = () => {
   return axios.get(`${API_URL}/featured`);
+};
+
+export const getActivityById = (id) => {
+  return axios.get(`${API_URL}/${id}`);
 };

@@ -78,6 +78,7 @@ function Home() {
           projects.map((project) => (
             <ProjectCard
               key={project.id}
+              id={project.id}
               title={project.title}
               description={project.description}
               techStack={project.techStack}
@@ -96,6 +97,7 @@ function Home() {
           activities.map((activity) => (
             <ActivityCard
               key={activity.id}
+              id={activity.id}
               title={activity.title}
               content={activity.content}
               date={activity.date}
