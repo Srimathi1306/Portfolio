@@ -4,12 +4,14 @@ import {
   getProjects,
   deleteProject,
   updateProject,
+  getFeaturedProjects,
 } from "../services/projectService";
 import {
   getActivities,
   addActivity,
   updateActivity,
   deleteActivity,
+  getFeaturedActivities,
 } from "../services/activityService";
 import {
   getReviews,
@@ -85,10 +87,32 @@ function Admin() {
       });
   };
 
+  const [featuredProjectCount, setFeaturedProjectCount] = useState(0);
+  const [featuredActivityCount, setFeaturedActivityCount] = useState(0);
+
+  const fetchDashboardCounts = () => {
+    getFeaturedProjects()
+      .then((response) => {
+        setFeaturedProjectCount(response.data.length);
+      })
+      .catch((error) => {
+        console.error("Error fetching featured projects count:", error);
+      });
+
+    getFeaturedActivities()
+      .then((response) => {
+        setFeaturedActivityCount(response.data.length);
+      })
+      .catch((error) => {
+        console.error("Error fetching featured activities count:", error);
+      });
+  };
+
   useEffect(() => {
     loadProjects();
     loadActivities();
     loadReviews();
+    fetchDashboardCounts();
   }, []);
 
   const handleProjectChange = (e) => {
@@ -106,6 +130,7 @@ function Admin() {
       updateProject(editingId, project)
         .then(() => {
           loadProjects();
+          fetchDashboardCounts();
 
           setEditingId(null);
 
@@ -124,6 +149,7 @@ function Admin() {
       addProject(project)
         .then(() => {
           loadProjects();
+          fetchDashboardCounts();
 
           setProject({
             title: "",
@@ -144,6 +170,7 @@ function Admin() {
     deleteProject(id)
       .then(() => {
         loadProjects();
+        fetchDashboardCounts();
       })
       .catch((error) => {
         console.error(error);
@@ -179,6 +206,7 @@ function Admin() {
       updateActivity(editingActivityId, activity)
         .then(() => {
           loadActivities();
+          fetchDashboardCounts();
 
           setEditingActivityId(null);
 
@@ -196,6 +224,7 @@ function Admin() {
       addActivity(activity)
         .then(() => {
           loadActivities();
+          fetchDashboardCounts();
 
           setActivity({
             title: "",
@@ -226,6 +255,7 @@ function Admin() {
     deleteActivity(id)
       .then(() => {
         loadActivities();
+        fetchDashboardCounts();
       })
       .catch((error) => {
         console.error(error);
@@ -300,10 +330,32 @@ function Admin() {
     <div className="section">
       <h1 className="section-title">Admin Dashboard</h1>
 
+      <div className="dashboard-cards">
+        <div className="dashboard-card">
+          <h3>Total Projects</h3>
+          <p>{projects.length}</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Featured Projects</h3>
+          <p>{featuredProjectCount}</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Total Activities</h3>
+          <p>{activities.length}</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Featured Activities</h3>
+          <p>{featuredActivityCount}</p>
+        </div>
+      </div>
+
       <div className="section">
         <h2 className="section-title">Projects</h2>
         <div className="card" ref={projectFormRef}>
-          <h2>Add Project</h2>
+          <h2>{editingId !== null ? "Update Project" : "Add Project"}</h2>
 
           <form onSubmit={handleProjectSubmit} className="form">
             <input
@@ -371,7 +423,9 @@ function Admin() {
       <div className="section">
         <h2 className="section-title">Activities</h2>
         <div className="card" ref={activityFormRef}>
-          <h2>Add Activity</h2>
+          <h2>
+            {editingActivityId !== null ? "Update Activity" : "Add Activity"}
+          </h2>
 
           <form onSubmit={handleActivitySubmit} className="form">
             <input
@@ -432,7 +486,7 @@ function Admin() {
       <div className="section">
         <h2 className="section-title">Reviews</h2>
         <div className="card" ref={reviewFormRef}>
-          <h2>Manage Reviews</h2>
+          <h2>{editingReviewId !== null ? "Update Review" : "Add Review"}</h2>
 
           <form onSubmit={handleReviewSubmit} className="form">
             <input
