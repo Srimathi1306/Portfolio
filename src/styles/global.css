@@ -163,3 +163,20 @@ button:hover {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.success-message {
+  background: #ecfdf5;
+  border: 1px solid #10b981;
+  color: #065f46;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+.error-message {
+  background: #fef2f2;
+  border: 1px solid #ef4444;
+  color: #b91c1c;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}

@@ -14,11 +14,11 @@ import {
   getFeaturedActivities,
 } from "../services/activityService";
 import {
-  getReviews,
-  addReview,
-  updateReview,
-  deleteReview,
-} from "../services/reviewService";
+  getAllFeedback,
+  approveFeedback,
+  rejectFeedback,
+  deleteFeedback,
+} from "../services/feedbackService";
 import ProjectCard from "../components/ProjectCard";
 import ActivityCard from "../components/ActivityCard";
 import ReviewCard from "../components/ReviewCard";
@@ -46,15 +46,7 @@ function Admin() {
   const [editingActivityId, setEditingActivityId] = useState(null);
   const activityFormRef = useRef(null);
 
-  const [review, setReview] = useState({
-    reviewer: "",
-    role: "",
-    comment: "",
-  });
-
-  const [reviews, setReviews] = useState([]);
-  const [editingReviewId, setEditingReviewId] = useState(null);
-  const reviewFormRef = useRef(null);
+  const [feedbackList, setFeedbackList] = useState([]);
 
   const loadProjects = () => {
     getProjects()
@@ -77,10 +69,10 @@ function Admin() {
       });
   };
 
-  const loadReviews = () => {
-    getReviews()
+  const loadFeedback = () => {
+    getAllFeedback()
       .then((response) => {
-        setReviews(response.data);
+        setFeedbackList(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -111,7 +103,7 @@ function Admin() {
   useEffect(() => {
     loadProjects();
     loadActivities();
-    loadReviews();
+    loadFeedback();
     fetchDashboardCounts();
   }, []);
 
@@ -262,64 +254,30 @@ function Admin() {
       });
   };
 
-  const handleReviewChange = (e) => {
-    setReview({
-      ...review,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleReviewSubmit = (e) => {
-    e.preventDefault();
-
-    if (editingReviewId !== null) {
-      updateReview(editingReviewId, review)
-        .then(() => {
-          loadReviews();
-
-          setEditingReviewId(null);
-
-          setReview({
-            reviewer: "",
-            role: "",
-            comment: "",
-          });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    } else {
-      addReview(review)
-        .then(() => {
-          loadReviews();
-
-          setReview({
-            reviewer: "",
-            role: "",
-            comment: "",
-          });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  };
-
-  const handleReviewEdit = (selectedReview) => {
-    setEditingReviewId(selectedReview.id);
-
-    setReview({
-      reviewer: selectedReview.reviewer,
-      role: selectedReview.role,
-      comment: selectedReview.comment,
-    });
-    reviewFormRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const handleReviewDelete = (id) => {
-    deleteReview(id)
+  const handleApproveFeedback = (id) => {
+    approveFeedback(id)
       .then(() => {
-        loadReviews();
+        loadFeedback();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const handleRejectFeedback = (id) => {
+    rejectFeedback(id)
+      .then(() => {
+        loadFeedback();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const handleDeleteFeedback = (id) => {
+    deleteFeedback(id)
+      .then(() => {
+        loadFeedback();
       })
       .catch((error) => {
         console.error(error);
@@ -486,54 +444,68 @@ function Admin() {
       </div>
 
       <div className="section">
-        <h2 className="section-title">Reviews</h2>
-        <div className="card" ref={reviewFormRef}>
-          <h2>{editingReviewId !== null ? "Update Review" : "Add Review"}</h2>
+        <h2 className="section-title">Feedback Moderation</h2>
 
-          <form onSubmit={handleReviewSubmit} className="form">
-            <input
-              type="text"
-              name="reviewer"
-              placeholder="Reviewer Name"
-              value={review.reviewer}
-              onChange={handleReviewChange}
-              required
-            />
+        {feedbackList.length === 0 ? (
+          <p>No feedback submitted yet.</p>
+        ) : (
+          feedbackList.map((feedback) => (
+            <div className="card" key={feedback.id}>
+              <h3>{feedback.reviewer}</h3>
 
-            <input
-              type="text"
-              name="role"
-              placeholder="Role e.g. Faculty, Recruiter, Friend"
-              value={review.role}
-              onChange={handleReviewChange}
-            />
+              <p>
+                <strong>Role:</strong> {feedback.role}
+              </p>
 
-            <textarea
-              name="comment"
-              placeholder="Review / Advice"
-              value={review.comment}
-              onChange={handleReviewChange}
-              required
-            />
+              <p>
+                <strong>Comment:</strong> {feedback.comment}
+              </p>
 
-            <button type="submit">
-              {editingReviewId !== null ? "Update Review" : "Add Review"}
-            </button>
-          </form>
-        </div>
+              <p>
+                <strong>Status:</strong> {feedback.status}
+              </p>
 
-        <h2 className="section-title">Review List</h2>
+              <p>
+                <strong>Type:</strong>{" "}
+                {feedback.project
+                  ? "Project Feedback"
+                  : feedback.activity
+                    ? "Activity Feedback"
+                    : "General Feedback"}
+              </p>
 
-        {reviews.map((review) => (
-          <ReviewCard
-            key={review.id}
-            reviewer={review.reviewer}
-            role={review.role}
-            comment={review.comment}
-            onEdit={() => handleReviewEdit(review)}
-            onDelete={() => handleReviewDelete(review.id)}
-          />
-        ))}
+              {feedback.project && (
+                <p>
+                  <strong>Project:</strong> {feedback.project.title}
+                </p>
+              )}
+
+              {feedback.activity && (
+                <p>
+                  <strong>Activity:</strong> {feedback.activity.title}
+                </p>
+              )}
+
+              <div>
+                {feedback.status !== "APPROVED" && (
+                  <button onClick={() => handleApproveFeedback(feedback.id)}>
+                    Approve
+                  </button>
+                )}
+
+                {feedback.status !== "REJECTED" && (
+                  <button onClick={() => handleRejectFeedback(feedback.id)}>
+                    Reject
+                  </button>
+                )}
+
+                <button onClick={() => handleDeleteFeedback(feedback.id)}>
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

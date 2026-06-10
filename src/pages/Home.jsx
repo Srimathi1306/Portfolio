@@ -1,18 +1,16 @@
 import ProjectCard from "../components/ProjectCard";
 import ActivityCard from "../components/ActivityCard";
-import ReviewCard from "../components/ReviewCard";
 import Skills from "../components/Skills";
 import Education from "../components/Education";
 import Timeline from "../components/Timeline";
 import { getFeaturedProjects } from "../services/projectService";
 import { getFeaturedActivities } from "../services/activityService";
-import { getReviews } from "../services/reviewService";
+
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 function Home() {
   const [projects, setProjects] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     getFeaturedProjects()
@@ -29,14 +27,6 @@ function Home() {
       })
       .catch((error) => {
         console.error("Error fetching featured activities:", error);
-      });
-
-    getReviews()
-      .then((response) => {
-        setReviews(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
       });
   }, []);
 
@@ -104,19 +94,6 @@ function Home() {
             />
           ))
         )}
-      </section>
-
-      <section className="section">
-        <h2 className="section-title">Review Preview</h2>
-
-        {reviews.slice(0, 2).map((review) => (
-          <ReviewCard
-            key={review.id}
-            name={review.reviewer}
-            role={review.role}
-            comment={review.comment}
-          />
-        ))}
       </section>
     </div>
   );
