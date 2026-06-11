@@ -313,6 +313,20 @@ function Admin() {
     return true;
   });
 
+  const totalFeedbackCount = feedbackList.length;
+
+  const pendingFeedbackCount = feedbackList.filter(
+    (feedback) => feedback.status === "PENDING",
+  ).length;
+
+  const approvedFeedbackCount = feedbackList.filter(
+    (feedback) => feedback.status === "APPROVED",
+  ).length;
+
+  const rejectedFeedbackCount = feedbackList.filter(
+    (feedback) => feedback.status === "REJECTED",
+  ).length;
+
   return (
     <div className="section">
       <h1 className="section-title">Admin Dashboard</h1>
@@ -336,6 +350,26 @@ function Admin() {
         <div className="dashboard-card">
           <h3>Featured Activities</h3>
           <p>{featuredActivityCount}</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Total Feedback</h3>
+          <p>{totalFeedbackCount}</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Pending Feedback</h3>
+          <p>{pendingFeedbackCount}</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Approved Feedback</h3>
+          <p>{approvedFeedbackCount}</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Rejected Feedback</h3>
+          <p>{rejectedFeedbackCount}</p>
         </div>
       </div>
 
