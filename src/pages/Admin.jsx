@@ -47,6 +47,7 @@ function Admin() {
   const activityFormRef = useRef(null);
 
   const [feedbackList, setFeedbackList] = useState([]);
+  const [feedbackFilter, setFeedbackFilter] = useState("ALL");
 
   const loadProjects = () => {
     getProjects()
@@ -284,6 +285,34 @@ function Admin() {
       });
   };
 
+  const filteredFeedbackList = feedbackList.filter((feedback) => {
+    if (feedbackFilter === "ALL") {
+      return true;
+    }
+
+    if (feedbackFilter === "PENDING") {
+      return feedback.status === "PENDING";
+    }
+
+    if (feedbackFilter === "APPROVED") {
+      return feedback.status === "APPROVED";
+    }
+
+    if (feedbackFilter === "REJECTED") {
+      return feedback.status === "REJECTED";
+    }
+
+    if (feedbackFilter === "PROJECT") {
+      return feedback.project !== null;
+    }
+
+    if (feedbackFilter === "ACTIVITY") {
+      return feedback.activity !== null;
+    }
+
+    return true;
+  });
+
   return (
     <div className="section">
       <h1 className="section-title">Admin Dashboard</h1>
@@ -446,10 +475,54 @@ function Admin() {
       <div className="section">
         <h2 className="section-title">Feedback Moderation</h2>
 
-        {feedbackList.length === 0 ? (
-          <p>No feedback submitted yet.</p>
+        <div className="filter-buttons">
+          <button
+            className={feedbackFilter === "ALL" ? "active" : ""}
+            onClick={() => setFeedbackFilter("ALL")}
+          >
+            All
+          </button>
+
+          <button
+            className={feedbackFilter === "PENDING" ? "active" : ""}
+            onClick={() => setFeedbackFilter("PENDING")}
+          >
+            Pending
+          </button>
+
+          <button
+            className={feedbackFilter === "APPROVED" ? "active" : ""}
+            onClick={() => setFeedbackFilter("APPROVED")}
+          >
+            Approved
+          </button>
+
+          <button
+            className={feedbackFilter === "REJECTED" ? "active" : ""}
+            onClick={() => setFeedbackFilter("REJECTED")}
+          >
+            Rejected
+          </button>
+
+          <button
+            className={feedbackFilter === "PROJECT" ? "active" : ""}
+            onClick={() => setFeedbackFilter("PROJECT")}
+          >
+            Project Feedback
+          </button>
+
+          <button
+            className={feedbackFilter === "ACTIVITY" ? "active" : ""}
+            onClick={() => setFeedbackFilter("ACTIVITY")}
+          >
+            Activity Feedback
+          </button>
+        </div>
+
+        {filteredFeedbackList.length === 0 ? (
+          <p>No feedback found for this filter.</p>
         ) : (
-          feedbackList.map((feedback) => (
+          filteredFeedbackList.map((feedback) => (
             <div className="card" key={feedback.id}>
               <h3>{feedback.reviewer}</h3>
 
