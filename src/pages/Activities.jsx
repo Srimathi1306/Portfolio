@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ActivityCard from "../components/ActivityCard";
 import { getActivities } from "../services/activityService";
 
-function Activity() {
+function Activities() {
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ function Activity() {
   }, []);
   return (
     <div>
-      <h1 className="section-title">Activity</h1>
+      <h1 className="section-title">Activities</h1>
 
       {activities.map((activity) => (
         <ActivityCard
@@ -31,4 +31,4 @@ function Activity() {
   );
 }
 
-export default Activity;
+export default Activities;

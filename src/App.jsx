@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Projects from "./pages/Projects";
-import Activity from "./pages/Activity";
+import Activities from "./pages/Activities";
 import Reviews from "./pages/Reviews";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
@@ -23,7 +23,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetails />} />
-            <Route path="/activities" element={<Activity />} />
+            <Route path="/activities" element={<Activities />} />
             <Route path="/activities/:id" element={<ActivityDetails />} />
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/contact" element={<Contact />} />

@@ -79,7 +79,7 @@ function Home() {
       </section>
 
       <section className="section">
-        <h2 className="section-title">Recent Activity</h2>
+        <h2 className="section-title">Recent Activities</h2>
 
         {activities.length === 0 ? (
           <p>No featured activities selected yet.</p>

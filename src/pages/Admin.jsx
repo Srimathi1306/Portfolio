@@ -19,6 +19,12 @@ import {
   rejectFeedback,
   deleteFeedback,
 } from "../services/feedbackService";
+import {
+  getContactMessages,
+  markMessageAsRead,
+  markMessageAsReplied,
+  deleteContactMessage,
+} from "../services/contactService";
 import ProjectCard from "../components/ProjectCard";
 import ActivityCard from "../components/ActivityCard";
 import ReviewCard from "../components/ReviewCard";
@@ -48,6 +54,8 @@ function Admin() {
 
   const [feedbackList, setFeedbackList] = useState([]);
   const [feedbackFilter, setFeedbackFilter] = useState("ALL");
+
+  const [contactMessages, setContactMessages] = useState([]);
 
   const loadProjects = () => {
     getProjects()
@@ -80,6 +88,16 @@ function Admin() {
       });
   };
 
+  const loadContactMessages = () => {
+    getContactMessages()
+      .then((response) => {
+        setContactMessages(response.data);
+      })
+      .catch((error) => {
+        console.error("Error loading contact messages:", error);
+      });
+  };
+
   const [featuredProjectCount, setFeaturedProjectCount] = useState(0);
   const [featuredActivityCount, setFeaturedActivityCount] = useState(0);
 
@@ -105,6 +123,7 @@ function Admin() {
     loadProjects();
     loadActivities();
     loadFeedback();
+    loadContactMessages();
     fetchDashboardCounts();
   }, []);
 
@@ -285,6 +304,36 @@ function Admin() {
       });
   };
 
+  const handleMarkAsRead = (id) => {
+    markMessageAsRead(id)
+      .then(() => {
+        loadContactMessages();
+      })
+      .catch((error) => {
+        console.error("Error marking message as read:", error);
+      });
+  };
+
+  const handleMarkAsReplied = (id) => {
+    markMessageAsReplied(id)
+      .then(() => {
+        loadContactMessages();
+      })
+      .catch((error) => {
+        console.error("Error marking message as replied:", error);
+      });
+  };
+
+  const handleDeleteMessage = (id) => {
+    deleteContactMessage(id)
+      .then(() => {
+        loadContactMessages();
+      })
+      .catch((error) => {
+        console.error("Error deleting message:", error);
+      });
+  };
+
   const filteredFeedbackList = feedbackList.filter((feedback) => {
     if (feedbackFilter === "ALL") {
       return true;
@@ -325,6 +374,12 @@ function Admin() {
 
   const rejectedFeedbackCount = feedbackList.filter(
     (feedback) => feedback.status === "REJECTED",
+  ).length;
+
+  const totalMessageCount = contactMessages.length;
+
+  const newMessageCount = contactMessages.filter(
+    (message) => message.status === "NEW",
   ).length;
 
   return (
@@ -370,6 +425,16 @@ function Admin() {
         <div className="dashboard-card">
           <h3>Rejected Feedback</h3>
           <p>{rejectedFeedbackCount}</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Total Messages</h3>
+          <p>{totalMessageCount}</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>New Messages</h3>
+          <p>{newMessageCount}</p>
         </div>
       </div>
 
@@ -607,6 +672,57 @@ function Admin() {
                 )}
 
                 <button onClick={() => handleDeleteFeedback(feedback.id)}>
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+      <div className="section">
+        <h2 className="section-title">Contact Messages</h2>
+
+        {contactMessages.length === 0 ? (
+          <p>No contact messages yet.</p>
+        ) : (
+          contactMessages.map((message) => (
+            <div className="card" key={message.id}>
+              <h3>{message.subject || "No Subject"}</h3>
+
+              <p>
+                <strong>Name:</strong> {message.name}
+              </p>
+
+              <p>
+                <strong>Email:</strong> {message.email}
+              </p>
+
+              <p>
+                <strong>Message:</strong> {message.message}
+              </p>
+
+              <p>
+                <strong>Status:</strong> {message.status}
+              </p>
+
+              <p>
+                <strong>Submitted At:</strong> {message.createdAt}
+              </p>
+
+              <div>
+                {message.status === "NEW" && (
+                  <button onClick={() => handleMarkAsRead(message.id)}>
+                    Mark as Read
+                  </button>
+                )}
+
+                {message.status !== "REPLIED" && (
+                  <button onClick={() => handleMarkAsReplied(message.id)}>
+                    Mark as Replied
+                  </button>
+                )}
+
+                <button onClick={() => handleDeleteMessage(message.id)}>
                   Delete
                 </button>
               </div>
