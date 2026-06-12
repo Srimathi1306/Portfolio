@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+import { removeToken } from "../services/authService";
 import { useEffect, useState, useRef } from "react";
 import {
   addProject,
@@ -30,6 +32,7 @@ import ActivityCard from "../components/ActivityCard";
 import ReviewCard from "../components/ReviewCard";
 
 function Admin() {
+  const navigate = useNavigate();
   const [project, setProject] = useState({
     title: "",
     description: "",
@@ -382,9 +385,16 @@ function Admin() {
     (message) => message.status === "NEW",
   ).length;
 
+  const handleLogout = () => {
+    removeToken();
+    navigate("/admin/login");
+  };
+
   return (
     <div className="section">
       <h1 className="section-title">Admin Dashboard</h1>
+      <button onClick={handleLogout}>Logout</button>
+      <br />
 
       <div className="dashboard-cards">
         <div className="dashboard-card">

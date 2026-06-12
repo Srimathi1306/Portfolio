@@ -7,6 +7,8 @@ import Activities from "./pages/Activities";
 import Reviews from "./pages/Reviews";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminLogin from "./pages/AdminLogin.jsx";
 import ProjectDetails from "./pages/ProjectDetails";
 import ActivityDetails from "./pages/ActivityDetails";
 
@@ -27,7 +29,15 @@ function App() {
             <Route path="/activities/:id" element={<ActivityDetails />} />
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/admin" element={<Admin />} />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/admin/login" element={<AdminLogin />} />
           </Routes>
         </Layout>
       </div>

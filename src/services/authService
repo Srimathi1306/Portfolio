@@ -1,0 +1,23 @@
+import axios from "axios";
+
+const API_URL = "http://localhost:8080/auth";
+
+export const loginAdmin = (loginData) => {
+  return axios.post(`${API_URL}/login`, loginData);
+};
+
+export const saveToken = (token) => {
+  localStorage.setItem("adminToken", token);
+};
+
+export const getToken = () => {
+  return localStorage.getItem("adminToken");
+};
+
+export const removeToken = () => {
+  localStorage.removeItem("adminToken");
+};
+
+export const isAdminLoggedIn = () => {
+  return getToken() !== null;
+};
