@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getAuthHeader } from "./authService";
 
 const API_URL = "http://localhost:8080/projects";
 
@@ -7,14 +8,17 @@ export const getProjects = () => {
 };
 
 export const addProject = (project) => {
-  return axios.post(API_URL, project);
+  return axios.post(API_URL, project, getAuthHeader());
 };
-export const deleteProject = (id) => {
-  return axios.delete(`${API_URL}/${id}`);
-};
+
 export const updateProject = (id, project) => {
-  return axios.put(`${API_URL}/${id}`, project);
+  return axios.put(`${API_URL}/${id}`, project, getAuthHeader());
 };
+
+export const deleteProject = (id) => {
+  return axios.delete(`${API_URL}/${id}`, getAuthHeader());
+};
+
 export const getFeaturedProjects = () => {
   return axios.get(`${API_URL}/featured`);
 };
