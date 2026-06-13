@@ -29,7 +29,19 @@ function AdminLogin() {
       })
       .catch((error) => {
         console.error("Login failed:", error);
-        setErrorMessage("Invalid username or password");
+
+        if (!error.response) {
+          setErrorMessage(
+            "Backend server is not running. Please start the backend.",
+          );
+        } else if (
+          error.response.status === 401 ||
+          error.response.status === 403
+        ) {
+          setErrorMessage("Invalid username or password");
+        } else {
+          setErrorMessage("Login failed. Please try again.");
+        }
       });
   };
 

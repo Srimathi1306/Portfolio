@@ -33,6 +33,8 @@ import ReviewCard from "../components/ReviewCard";
 
 function Admin() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [adminError, setAdminError] = useState("");
   const [project, setProject] = useState({
     title: "",
     description: "",
@@ -61,43 +63,46 @@ function Admin() {
   const [contactMessages, setContactMessages] = useState([]);
 
   const loadProjects = () => {
-    getProjects()
+    return getProjects()
       .then((response) => {
         setProjects(response.data);
       })
-
       .catch((error) => {
         console.error(error);
+        throw error;
       });
   };
 
   const loadActivities = () => {
-    getActivities()
+    return getActivities()
       .then((response) => {
         setActivities(response.data);
       })
       .catch((error) => {
         console.error(error);
+        throw error;
       });
   };
 
   const loadFeedback = () => {
-    getAllFeedback()
+    return getAllFeedback()
       .then((response) => {
         setFeedbackList(response.data);
       })
       .catch((error) => {
         console.error(error);
+        throw error;
       });
   };
 
   const loadContactMessages = () => {
-    getContactMessages()
+    return getContactMessages()
       .then((response) => {
         setContactMessages(response.data);
       })
       .catch((error) => {
         console.error("Error loading contact messages:", error);
+        throw error;
       });
   };
 
@@ -105,29 +110,51 @@ function Admin() {
   const [featuredActivityCount, setFeaturedActivityCount] = useState(0);
 
   const fetchDashboardCounts = () => {
-    getFeaturedProjects()
-      .then((response) => {
-        setFeaturedProjectCount(response.data.length);
+    return Promise.all([getFeaturedProjects(), getFeaturedActivities()])
+      .then(([projectResponse, activityResponse]) => {
+        setFeaturedProjectCount(projectResponse.data.length);
+        setFeaturedActivityCount(activityResponse.data.length);
       })
       .catch((error) => {
-        console.error("Error fetching featured projects count:", error);
-      });
-
-    getFeaturedActivities()
-      .then((response) => {
-        setFeaturedActivityCount(response.data.length);
-      })
-      .catch((error) => {
-        console.error("Error fetching featured activities count:", error);
+        console.error("Error fetching dashboard counts:", error);
+        throw error;
       });
   };
 
   useEffect(() => {
-    loadProjects();
-    loadActivities();
-    loadFeedback();
-    loadContactMessages();
-    fetchDashboardCounts();
+    const loadAdminData = async () => {
+      try {
+        setLoading(true);
+        setAdminError("");
+
+        await Promise.all([
+          loadProjects(),
+          loadActivities(),
+          loadFeedback(),
+          loadContactMessages(),
+          fetchDashboardCounts(),
+        ]);
+      } catch (error) {
+        console.error("Admin dashboard loading failed:", error);
+
+        if (
+          error.response &&
+          (error.response.status === 401 || error.response.status === 403)
+        ) {
+          setAdminError(
+            "Session expired or unauthorized. Please logout and login again.",
+          );
+        } else {
+          setAdminError(
+            "Unable to load admin dashboard. Please check if backend is running.",
+          );
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAdminData();
   }, []);
 
   const handleProjectChange = (e) => {
@@ -393,7 +420,18 @@ function Admin() {
   return (
     <div className="section">
       <h1 className="section-title">Admin Dashboard</h1>
-      <button onClick={handleLogout}>Logout</button>
+
+      {loading && <p>Loading admin dashboard...</p>}
+
+      {adminError && (
+        <div>
+          <p className="error-message">{adminError}</p>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+      )}
+
+      {!adminError && <button onClick={handleLogout}>Logout</button>}
+
       <br />
 
       <div className="dashboard-cards">
