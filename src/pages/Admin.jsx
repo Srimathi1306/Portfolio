@@ -33,6 +33,7 @@ import ReviewCard from "../components/ReviewCard";
 
 function Admin() {
   const navigate = useNavigate();
+  const [activeSection, setActiveSection] = useState("dashboard");
   const [loading, setLoading] = useState(true);
   const [adminError, setAdminError] = useState("");
   const [project, setProject] = useState({
@@ -434,350 +435,400 @@ function Admin() {
 
       <br />
 
-      <div className="dashboard-cards">
-        <div className="dashboard-card">
-          <h3>Total Projects</h3>
-          <p>{projects.length}</p>
-        </div>
+      <div className="admin-tabs">
+        <button
+          className={activeSection === "dashboard" ? "active-tab" : ""}
+          onClick={() => setActiveSection("dashboard")}
+        >
+          Dashboard
+        </button>
 
-        <div className="dashboard-card">
-          <h3>Featured Projects</h3>
-          <p>{featuredProjectCount}</p>
-        </div>
+        <button
+          className={activeSection === "projects" ? "active-tab" : ""}
+          onClick={() => setActiveSection("projects")}
+        >
+          Projects
+        </button>
 
-        <div className="dashboard-card">
-          <h3>Total Activities</h3>
-          <p>{activities.length}</p>
-        </div>
+        <button
+          className={activeSection === "activities" ? "active-tab" : ""}
+          onClick={() => setActiveSection("activities")}
+        >
+          Activities
+        </button>
 
-        <div className="dashboard-card">
-          <h3>Featured Activities</h3>
-          <p>{featuredActivityCount}</p>
-        </div>
+        <button
+          className={activeSection === "feedback" ? "active-tab" : ""}
+          onClick={() => setActiveSection("feedback")}
+        >
+          Feedback
+        </button>
 
-        <div className="dashboard-card">
-          <h3>Total Feedback</h3>
-          <p>{totalFeedbackCount}</p>
-        </div>
-
-        <div className="dashboard-card">
-          <h3>Pending Feedback</h3>
-          <p>{pendingFeedbackCount}</p>
-        </div>
-
-        <div className="dashboard-card">
-          <h3>Approved Feedback</h3>
-          <p>{approvedFeedbackCount}</p>
-        </div>
-
-        <div className="dashboard-card">
-          <h3>Rejected Feedback</h3>
-          <p>{rejectedFeedbackCount}</p>
-        </div>
-
-        <div className="dashboard-card">
-          <h3>Total Messages</h3>
-          <p>{totalMessageCount}</p>
-        </div>
-
-        <div className="dashboard-card">
-          <h3>New Messages</h3>
-          <p>{newMessageCount}</p>
-        </div>
+        <button
+          className={activeSection === "messages" ? "active-tab" : ""}
+          onClick={() => setActiveSection("messages")}
+        >
+          Messages
+        </button>
       </div>
 
-      <div className="section">
-        <h2 className="section-title">Projects</h2>
-        <div className="card" ref={projectFormRef}>
-          <h2>{editingId !== null ? "Update Project" : "Add Project"}</h2>
+      {activeSection === "dashboard" && (
+        <div className="dashboard-cards">
+          <div className="dashboard-card">
+            <h3>Total Projects</h3>
+            <p>{projects.length}</p>
+          </div>
 
-          <form onSubmit={handleProjectSubmit} className="form">
-            <input
-              type="text"
-              name="title"
-              placeholder="Project Title"
-              value={project.title}
-              onChange={handleProjectChange}
-              required
-            />
+          <div className="dashboard-card">
+            <h3>Featured Projects</h3>
+            <p>{featuredProjectCount}</p>
+          </div>
 
-            <textarea
-              name="description"
-              placeholder="Project Description"
-              value={project.description}
-              onChange={handleProjectChange}
-              required
-            />
+          <div className="dashboard-card">
+            <h3>Total Activities</h3>
+            <p>{activities.length}</p>
+          </div>
 
-            <input
-              type="text"
-              name="techStack"
-              placeholder="Tech Stack"
-              value={project.techStack}
-              onChange={handleProjectChange}
-            />
+          <div className="dashboard-card">
+            <h3>Featured Activities</h3>
+            <p>{featuredActivityCount}</p>
+          </div>
 
-            <input
-              type="text"
-              name="category"
-              placeholder="Category"
-              value={project.category}
-              onChange={handleProjectChange}
-            />
+          <div className="dashboard-card">
+            <h3>Total Feedback</h3>
+            <p>{totalFeedbackCount}</p>
+          </div>
 
-            <label>
+          <div className="dashboard-card">
+            <h3>Pending Feedback</h3>
+            <p>{pendingFeedbackCount}</p>
+          </div>
+
+          <div className="dashboard-card">
+            <h3>Approved Feedback</h3>
+            <p>{approvedFeedbackCount}</p>
+          </div>
+
+          <div className="dashboard-card">
+            <h3>Rejected Feedback</h3>
+            <p>{rejectedFeedbackCount}</p>
+          </div>
+
+          <div className="dashboard-card">
+            <h3>Total Messages</h3>
+            <p>{totalMessageCount}</p>
+          </div>
+
+          <div className="dashboard-card">
+            <h3>New Messages</h3>
+            <p>{newMessageCount}</p>
+          </div>
+        </div>
+      )}
+
+      {activeSection === "projects" && (
+        <div className="section">
+          <h2 className="section-title">Projects</h2>
+          <div className="card" ref={projectFormRef}>
+            <h2>{editingId !== null ? "Update Project" : "Add Project"}</h2>
+
+            <form onSubmit={handleProjectSubmit} className="form">
               <input
-                type="checkbox"
-                name="featured"
-                checked={project.featured || false}
+                type="text"
+                name="title"
+                placeholder="Project Title"
+                value={project.title}
+                onChange={handleProjectChange}
+                required
+              />
+
+              <textarea
+                name="description"
+                placeholder="Project Description"
+                value={project.description}
+                onChange={handleProjectChange}
+                required
+              />
+
+              <input
+                type="text"
+                name="techStack"
+                placeholder="Tech Stack"
+                value={project.techStack}
                 onChange={handleProjectChange}
               />
-              Show on Home Page
-            </label>
 
-            <button type="submit">
-              {editingId ? "Update Project" : "Add Project"}
-            </button>
-          </form>
-        </div>
-
-        <h2 className="section-title">Project List</h2>
-        {projects.map((project) => (
-          <ProjectCard
-            key={project.id}
-            id={project.id}
-            title={project.title}
-            description={project.description}
-            techStack={project.techStack}
-            onEdit={() => handleProjectEdit(project)}
-            onDelete={() => handleProjectDelete(project.id)}
-          />
-        ))}
-      </div>
-
-      <div className="section">
-        <h2 className="section-title">Activities</h2>
-        <div className="card" ref={activityFormRef}>
-          <h2>
-            {editingActivityId !== null ? "Update Activity" : "Add Activity"}
-          </h2>
-
-          <form onSubmit={handleActivitySubmit} className="form">
-            <input
-              type="text"
-              name="title"
-              placeholder="Activity Title"
-              value={activity.title}
-              onChange={handleActivityChange}
-              required
-            />
-
-            <textarea
-              name="content"
-              placeholder="Activity Content"
-              value={activity.content}
-              onChange={handleActivityChange}
-              required
-            />
-
-            <input
-              type="text"
-              name="date"
-              placeholder="Date / Day"
-              value={activity.date}
-              onChange={handleActivityChange}
-            />
-
-            <label>
               <input
-                type="checkbox"
-                name="featured"
-                checked={activity.featured || false}
+                type="text"
+                name="category"
+                placeholder="Category"
+                value={project.category}
+                onChange={handleProjectChange}
+              />
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="featured"
+                  checked={project.featured || false}
+                  onChange={handleProjectChange}
+                />
+                Show on Home Page
+              </label>
+
+              <button type="submit">
+                {editingId ? "Update Project" : "Add Project"}
+              </button>
+            </form>
+          </div>
+
+          <h2 className="section-title">Project List</h2>
+          {projects.map((project) => (
+            <ProjectCard
+              key={project.id}
+              id={project.id}
+              title={project.title}
+              description={project.description}
+              techStack={project.techStack}
+              onEdit={() => handleProjectEdit(project)}
+              onDelete={() => handleProjectDelete(project.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {activeSection === "activities" && (
+        <div className="section">
+          <h2 className="section-title">Activities</h2>
+          <div className="card" ref={activityFormRef}>
+            <h2>
+              {editingActivityId !== null ? "Update Activity" : "Add Activity"}
+            </h2>
+
+            <form onSubmit={handleActivitySubmit} className="form">
+              <input
+                type="text"
+                name="title"
+                placeholder="Activity Title"
+                value={activity.title}
+                onChange={handleActivityChange}
+                required
+              />
+
+              <textarea
+                name="content"
+                placeholder="Activity Content"
+                value={activity.content}
+                onChange={handleActivityChange}
+                required
+              />
+
+              <input
+                type="text"
+                name="date"
+                placeholder="Date / Day"
+                value={activity.date}
                 onChange={handleActivityChange}
               />
-              Show on Home Page
-            </label>
 
-            <button type="submit">
-              {editingActivityId !== null ? "Update Activity" : "Add Activity"}
+              <label>
+                <input
+                  type="checkbox"
+                  name="featured"
+                  checked={activity.featured || false}
+                  onChange={handleActivityChange}
+                />
+                Show on Home Page
+              </label>
+
+              <button type="submit">
+                {editingActivityId !== null
+                  ? "Update Activity"
+                  : "Add Activity"}
+              </button>
+            </form>
+          </div>
+
+          <h2 className="section-title">Activity List</h2>
+
+          {activities.map((activity) => (
+            <ActivityCard
+              key={activity.id}
+              id={activity.id}
+              title={activity.title}
+              date={activity.date}
+              content={activity.content}
+              onEdit={() => handleActivityEdit(activity)}
+              onDelete={() => handleActivityDelete(activity.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {activeSection === "feedback" && (
+        <div className="section">
+          <h2 className="section-title">Feedback Moderation</h2>
+
+          <div className="filter-buttons">
+            <button
+              className={feedbackFilter === "ALL" ? "active" : ""}
+              onClick={() => setFeedbackFilter("ALL")}
+            >
+              All
             </button>
-          </form>
-        </div>
 
-        <h2 className="section-title">Activity List</h2>
+            <button
+              className={feedbackFilter === "PENDING" ? "active" : ""}
+              onClick={() => setFeedbackFilter("PENDING")}
+            >
+              Pending
+            </button>
 
-        {activities.map((activity) => (
-          <ActivityCard
-            key={activity.id}
-            id={activity.id}
-            title={activity.title}
-            date={activity.date}
-            content={activity.content}
-            onEdit={() => handleActivityEdit(activity)}
-            onDelete={() => handleActivityDelete(activity.id)}
-          />
-        ))}
-      </div>
+            <button
+              className={feedbackFilter === "APPROVED" ? "active" : ""}
+              onClick={() => setFeedbackFilter("APPROVED")}
+            >
+              Approved
+            </button>
 
-      <div className="section">
-        <h2 className="section-title">Feedback Moderation</h2>
+            <button
+              className={feedbackFilter === "REJECTED" ? "active" : ""}
+              onClick={() => setFeedbackFilter("REJECTED")}
+            >
+              Rejected
+            </button>
 
-        <div className="filter-buttons">
-          <button
-            className={feedbackFilter === "ALL" ? "active" : ""}
-            onClick={() => setFeedbackFilter("ALL")}
-          >
-            All
-          </button>
+            <button
+              className={feedbackFilter === "PROJECT" ? "active" : ""}
+              onClick={() => setFeedbackFilter("PROJECT")}
+            >
+              Project Feedback
+            </button>
 
-          <button
-            className={feedbackFilter === "PENDING" ? "active" : ""}
-            onClick={() => setFeedbackFilter("PENDING")}
-          >
-            Pending
-          </button>
+            <button
+              className={feedbackFilter === "ACTIVITY" ? "active" : ""}
+              onClick={() => setFeedbackFilter("ACTIVITY")}
+            >
+              Activity Feedback
+            </button>
+          </div>
 
-          <button
-            className={feedbackFilter === "APPROVED" ? "active" : ""}
-            onClick={() => setFeedbackFilter("APPROVED")}
-          >
-            Approved
-          </button>
+          {filteredFeedbackList.length === 0 ? (
+            <p>No feedback found for this filter.</p>
+          ) : (
+            filteredFeedbackList.map((feedback) => (
+              <div className="card" key={feedback.id}>
+                <h3>{feedback.reviewer}</h3>
 
-          <button
-            className={feedbackFilter === "REJECTED" ? "active" : ""}
-            onClick={() => setFeedbackFilter("REJECTED")}
-          >
-            Rejected
-          </button>
-
-          <button
-            className={feedbackFilter === "PROJECT" ? "active" : ""}
-            onClick={() => setFeedbackFilter("PROJECT")}
-          >
-            Project Feedback
-          </button>
-
-          <button
-            className={feedbackFilter === "ACTIVITY" ? "active" : ""}
-            onClick={() => setFeedbackFilter("ACTIVITY")}
-          >
-            Activity Feedback
-          </button>
-        </div>
-
-        {filteredFeedbackList.length === 0 ? (
-          <p>No feedback found for this filter.</p>
-        ) : (
-          filteredFeedbackList.map((feedback) => (
-            <div className="card" key={feedback.id}>
-              <h3>{feedback.reviewer}</h3>
-
-              <p>
-                <strong>Role:</strong> {feedback.role}
-              </p>
-
-              <p>
-                <strong>Comment:</strong> {feedback.comment}
-              </p>
-
-              <p>
-                <strong>Status:</strong> {feedback.status}
-              </p>
-
-              <p>
-                <strong>Type:</strong>{" "}
-                {feedback.project
-                  ? "Project Feedback"
-                  : feedback.activity
-                    ? "Activity Feedback"
-                    : "General Feedback"}
-              </p>
-
-              {feedback.project && (
                 <p>
-                  <strong>Project:</strong> {feedback.project.title}
+                  <strong>Role:</strong> {feedback.role}
                 </p>
-              )}
 
-              {feedback.activity && (
                 <p>
-                  <strong>Activity:</strong> {feedback.activity.title}
+                  <strong>Comment:</strong> {feedback.comment}
                 </p>
-              )}
 
-              <div>
-                {feedback.status !== "APPROVED" && (
-                  <button onClick={() => handleApproveFeedback(feedback.id)}>
-                    Approve
-                  </button>
+                <p>
+                  <strong>Status:</strong> {feedback.status}
+                </p>
+
+                <p>
+                  <strong>Type:</strong>{" "}
+                  {feedback.project
+                    ? "Project Feedback"
+                    : feedback.activity
+                      ? "Activity Feedback"
+                      : "General Feedback"}
+                </p>
+
+                {feedback.project && (
+                  <p>
+                    <strong>Project:</strong> {feedback.project.title}
+                  </p>
                 )}
 
-                {feedback.status !== "REJECTED" && (
-                  <button onClick={() => handleRejectFeedback(feedback.id)}>
-                    Reject
-                  </button>
+                {feedback.activity && (
+                  <p>
+                    <strong>Activity:</strong> {feedback.activity.title}
+                  </p>
                 )}
 
-                <button onClick={() => handleDeleteFeedback(feedback.id)}>
-                  Delete
-                </button>
+                <div>
+                  {feedback.status !== "APPROVED" && (
+                    <button onClick={() => handleApproveFeedback(feedback.id)}>
+                      Approve
+                    </button>
+                  )}
+
+                  {feedback.status !== "REJECTED" && (
+                    <button onClick={() => handleRejectFeedback(feedback.id)}>
+                      Reject
+                    </button>
+                  )}
+
+                  <button onClick={() => handleDeleteFeedback(feedback.id)}>
+                    Delete
+                  </button>
+                </div>
               </div>
-            </div>
-          ))
-        )}
-      </div>
-      <div className="section">
-        <h2 className="section-title">Contact Messages</h2>
+            ))
+          )}
+        </div>
+      )}
 
-        {contactMessages.length === 0 ? (
-          <p>No contact messages yet.</p>
-        ) : (
-          contactMessages.map((message) => (
-            <div className="card" key={message.id}>
-              <h3>{message.subject || "No Subject"}</h3>
+      {activeSection === "messages" && (
+        <div className="section">
+          <h2 className="section-title">Contact Messages</h2>
 
-              <p>
-                <strong>Name:</strong> {message.name}
-              </p>
+          {contactMessages.length === 0 ? (
+            <p>No contact messages yet.</p>
+          ) : (
+            contactMessages.map((message) => (
+              <div className="card" key={message.id}>
+                <h3>{message.subject || "No Subject"}</h3>
 
-              <p>
-                <strong>Email:</strong> {message.email}
-              </p>
+                <p>
+                  <strong>Name:</strong> {message.name}
+                </p>
 
-              <p>
-                <strong>Message:</strong> {message.message}
-              </p>
+                <p>
+                  <strong>Email:</strong> {message.email}
+                </p>
 
-              <p>
-                <strong>Status:</strong> {message.status}
-              </p>
+                <p>
+                  <strong>Message:</strong> {message.message}
+                </p>
 
-              <p>
-                <strong>Submitted At:</strong> {message.createdAt}
-              </p>
+                <p>
+                  <strong>Status:</strong> {message.status}
+                </p>
 
-              <div>
-                {message.status === "NEW" && (
-                  <button onClick={() => handleMarkAsRead(message.id)}>
-                    Mark as Read
+                <p>
+                  <strong>Submitted At:</strong> {message.createdAt}
+                </p>
+
+                <div>
+                  {message.status === "NEW" && (
+                    <button onClick={() => handleMarkAsRead(message.id)}>
+                      Mark as Read
+                    </button>
+                  )}
+
+                  {message.status !== "REPLIED" && (
+                    <button onClick={() => handleMarkAsReplied(message.id)}>
+                      Mark as Replied
+                    </button>
+                  )}
+
+                  <button onClick={() => handleDeleteMessage(message.id)}>
+                    Delete
                   </button>
-                )}
-
-                {message.status !== "REPLIED" && (
-                  <button onClick={() => handleMarkAsReplied(message.id)}>
-                    Mark as Replied
-                  </button>
-                )}
-
-                <button onClick={() => handleDeleteMessage(message.id)}>
-                  Delete
-                </button>
+                </div>
               </div>
-            </div>
-          ))
-        )}
-      </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }
