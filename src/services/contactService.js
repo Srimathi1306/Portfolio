@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getAuthHeader } from "./authService";
 
-const API_URL = "http://localhost:8080";
+const API_URL = import.meta.env.VITE_API_URL;
 
 // Public: user submits contact form
 export const submitContactMessage = (message) => {

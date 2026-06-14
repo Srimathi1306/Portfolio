@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getAuthHeader } from "./authService";
 
-const API_URL = "http://localhost:8080/projects";
+const API_URL = `${import.meta.env.VITE_API_URL}/projects`;
 
 export const getProjects = () => {
   return axios.get(API_URL);
