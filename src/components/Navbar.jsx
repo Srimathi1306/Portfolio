@@ -14,14 +14,17 @@ function Navbar() {
           <Link to="/about">About</Link>
         </li>
         <li>
+          <Link to="/skills">Skills</Link>
+        </li>
+        <li>
           <Link to="/projects">Projects</Link>
         </li>
         <li>
           <Link to="/activities">Activities</Link>
         </li>
-        <li>
+        {/* <li>
           <Link to="/reviews">Reviews</Link>
-        </li>
+        </li> */}
         <li>
           <Link to="/contact">Contact</Link>
         </li>
