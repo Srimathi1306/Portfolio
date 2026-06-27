@@ -92,7 +92,8 @@ function ProjectDetails() {
           <strong>Featured:</strong> {project.featured ? "Yes" : "No"}
         </p>
       </div>
-      <div className="section">
+
+      {/* <div className="section">
         <h2 className="section-title">Approved Feedback</h2>
 
         {feedbackList.length === 0 ? (
@@ -108,7 +109,8 @@ function ProjectDetails() {
             </div>
           ))
         )}
-      </div>
+      </div> */}
+
       <div className="section">
         <h2 className="section-title">Share Feedback</h2>
 
